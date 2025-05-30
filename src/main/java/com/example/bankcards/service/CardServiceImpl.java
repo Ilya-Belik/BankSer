@@ -38,7 +38,7 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public CardDto createCard(CardCreateRequest request) {
-        UserEntity currentUserEntity = userService.getCurrentUser();
+        var currentUserEntity = userService.getCurrentUser();
 
 
         boolean isAdmin = false;
