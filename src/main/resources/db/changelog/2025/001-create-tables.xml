@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="1" author="IlyaBelik">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="users"/>
+            </not>
+        </preConditions>
+        <createTable tableName="users">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="VARCHAR(50)"/>
+            <column name="password" type="VARCHAR(200)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="IlyaBelik">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="roles"/>
+            </not>
+        </preConditions>
+        <createTable tableName="roles">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="3" author="IlyaBelik">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="user_roles"/>
+            </not>
+        </preConditions>
+        <createTable tableName="user_roles">
+            <column name="user_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="user_id, role_id" constraintName="pk_user_roles" tableName="user_roles"/>
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="user_roles"
+                                 referencedColumnNames="id"
+                                 referencedTableName="users"
+                                 constraintName="fk_user_roles_user"/>
+        <addForeignKeyConstraint baseColumnNames="role_id"
+                                 baseTableName="user_roles"
+                                 referencedColumnNames="id"
+                                 referencedTableName="roles"
+                                 constraintName="fk_user_roles_role"/>
+    </changeSet>
+
+    <changeSet id="4" author="IlyaBelik">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="cards"/>
+            </not>
+        </preConditions>
+        <createTable tableName="cards">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="card_number" type="VARCHAR(255)"/>
+            <column name="masked_number" type="VARCHAR(19)"/>
+            <column name="validity_period" type="DATE"/>
+            <column name="balance" type="DECIMAL(19,2)"/>
+            <column name="status" type="VARCHAR(20)"/>
+            <column name="user_id" type="UUID"/>
+            <column name="created_at" type="TIMESTAMP"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="cards"
+                                 referencedColumnNames="id"
+                                 referencedTableName="users"
+                                 constraintName="fk_cards_user"/>
+    </changeSet>
+
+    <changeSet id="5" author="IlyaBelik">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="transfers"/>
+            </not>
+        </preConditions>
+        <createTable tableName="transfers">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="from_card_id" type="UUID"/>
+            <column name="to_card_id" type="UUID"/>
+            <column name="amount" type="DECIMAL(19,2)"/>
+            <column name="created_at" type="TIMESTAMP"/>
+            <column name="status" type="VARCHAR(20)"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="from_card_id"
+                                 baseTableName="transfers"
+                                 referencedColumnNames="id"
+                                 referencedTableName="cards"
+                                 constraintName="fk_transfers_from_card"/>
+        <addForeignKeyConstraint baseColumnNames="to_card_id"
+                                 baseTableName="transfers"
+                                 referencedColumnNames="id"
+                                 referencedTableName="cards"
+                                 constraintName="fk_transfers_to_card"/>
+    </changeSet>
+
+    <changeSet id="6" author="IlyaBelik">
+        <insert tableName="roles">
+            <column name="id" value="11111111-1111-1111-1111-111111111111"/>
+            <column name="name" value="ROLE_USER"/>
+        </insert>
+        <insert tableName="roles">
+            <column name="id" value="22222222-2222-2222-2222-222222222222"/>
+            <column name="name" value="ROLE_ADMIN"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="7" author="IlyaBelik">
+        <insert tableName="users">
+            <column name="id" value="11111111-1111-1111-1111-111111111111"/>
+            <column name="username" value="admin"/>
+            <column name="password" value="$2a$10$7sHPnXZkVG6yTPnXYcU.k.VSZuVK4BPAU.XphneYw/P6HhULakDpu"/> <!-- пароль: admin -->
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="22222222-2222-2222-2222-222222222222"/>
+            <column name="username" value="user"/>
+            <column name="password" value="$2a$10$dXJRCuWwLoE7WxslzLjL1OHrgH6Bi57uYVq0jA3xvTogUzUj/ZZZm"/> <!-- пароль: user -->
+        </insert>
+    </changeSet>
+
+    <changeSet id="8" author="IlyaBelik">
+        <insert tableName="user_roles">
+            <column name="user_id" value="11111111-1111-1111-1111-111111111111"/>
+            <column name="role_id" value="22222222-2222-2222-2222-222222222222"/> <!-- ROLE_ADMIN -->
+        </insert>
+        <insert tableName="user_roles">
+            <column name="user_id" value="22222222-2222-2222-2222-222222222222"/>
+            <column name="role_id" value="11111111-1111-1111-1111-111111111111"/> <!-- ROLE_USER -->
+        </insert>
+    </changeSet>
+</databaseChangeLog>
