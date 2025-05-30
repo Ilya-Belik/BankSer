@@ -4,6 +4,7 @@ import com.example.bankcards.dto.UserCreateRequest;
 import com.example.bankcards.dto.UserResponse;
 import com.example.bankcards.dto.jwt.JwtAuthenticationResponse;
 import com.example.bankcards.dto.jwt.SignInRequest;
+import com.example.bankcards.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +18,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserService userService;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final UserMapper userMapper;
 
 
     /**
@@ -27,15 +29,12 @@ public class AuthServiceImpl implements AuthService {
      */
     @Override
     public UserResponse signUp(UserCreateRequest request) {
-        var user = userService.createNewUser(request);
-        var token = jwtService.generateToken((UserDetails) user);
+        var user  = userService.createNewUser(request);
+        var token = jwtService.generateToken(user);
 
-        return new UserResponse(
-                user.getId(),
-                user.getUsername(),
-                user.getRoles().toString(),
-                token
-        );
+        var response = userMapper.toDto(user);
+        response.setToken(token);
+        return response;
     }
 
     /**

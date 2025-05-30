@@ -32,8 +32,8 @@ public class UserEntity implements UserDetails {
     @Column(length = 100)
     private String email;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt = LocalDateTime.now();
+//    @Column(name = "created_at")
+//    private LocalDateTime createdAt = LocalDateTime.now();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<CardEntity> cards = new ArrayList<>();

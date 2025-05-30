@@ -225,4 +225,14 @@
         </insert>
     </changeSet>
 
+    <changeSet id="1.2" author="IlyaBelik">
+        <addColumn tableName="users">
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="users">
+            <column name="email" type="VARCHAR(100)"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

@@ -1,5 +1,6 @@
 package com.example.bankcards.dto;
 
+import com.example.bankcards.entity.RoleName;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,8 +22,11 @@ public class UserResponse {
     private String username;
 
     @Schema(description = "Роль")
-    private String role;
+    private RoleName role;
 
     @Schema(description = "JWT токен доступа")
     private String token;
+
+    public UserResponse(UUID id, String username, String string, String token) {
+    }
 }

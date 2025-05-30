@@ -1,9 +1,10 @@
 package com.example.bankcards.security;
 
 import com.example.bankcards.dto.UserCreateRequest;
+import com.example.bankcards.entity.RoleEntity;
 import com.example.bankcards.entity.UserEntity;
+import com.example.bankcards.repository.RoleRepository;
 import com.example.bankcards.repository.UserRepository;
-import com.example.bankcards.exception.PersonNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,15 +13,20 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserServiceImpl implements UserService {
 
 private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
-@Override
+    @Override
 public List<UserEntity> getAll() {
     return userRepository.findAll();
 }
@@ -33,9 +39,14 @@ public UserEntity findUserById(UUID id) {
 
 @Override
 public UserEntity createNewUser(UserCreateRequest request) {
-    UserEntity user = new UserEntity();
-    user.setUsername(request.getUsername());
-    user.setPassword(request.getPassword());
+    RoleEntity role = roleRepository.findByName(request.getRoleEnum())
+            .orElseThrow(() -> new IllegalArgumentException("Role not found"));
+
+    UserEntity user = UserEntity.builder()
+            .username(request.getUsername())
+            .roles(Set.of(role))
+            .build();
+
     return userRepository.save(user);
 }
 
