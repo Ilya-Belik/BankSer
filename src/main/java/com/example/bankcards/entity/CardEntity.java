@@ -1,52 +1,46 @@
 package com.example.bankcards.entity;
 
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.math.BigDecimal;
-import java.security.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
 @Entity
 @Table(name = "cards")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class CardEntity {
-
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @NotNull
     @Column(name = "card_number", nullable = false)
     private String cardNumber;
 
-    @NotNull
     @Column(name = "masked_number", nullable = false, length = 19)
     private String maskedNumber;
 
-    @NotNull
     @Column(name = "validity_period", nullable = false)
-    private Date validityPeriod;
+    private LocalDate validityPeriod;
 
-    @NotNull
-    @Column(name = "balance", nullable = false)
+    @Column(nullable = false)
     private BigDecimal balance;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, length = 20)
     private CardStatusEnum status;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity userEntity;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 
     @Column(name = "created_at")
-    private Timestamp createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

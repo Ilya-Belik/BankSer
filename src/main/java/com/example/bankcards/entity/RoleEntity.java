@@ -1,23 +1,24 @@
 package com.example.bankcards.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.UUID;
 
 @Entity
 @Table(name = "roles")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class RoleEntity {
-
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @Column(nullable = false, length = 50, unique = true)
-    private String name;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "name", nullable = false, unique = true)
+    private RoleName name;
+    //todo: учесть, что роль не стринга, а енам
 }

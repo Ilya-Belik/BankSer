@@ -4,13 +4,13 @@ import com.example.bankcards.dto.CardCreateRequest;
 import com.example.bankcards.dto.CardDto;
 import com.example.bankcards.entity.CardEntity;
 import com.example.bankcards.entity.CardStatusEnum;
-import com.example.bankcards.entity.RoleEntity;
+import com.example.bankcards.entity.RoleName;
 import com.example.bankcards.entity.UserEntity;
 import com.example.bankcards.exception.ErrorMessages;
 import com.example.bankcards.exception.NotFoundException;
+import com.example.bankcards.mapper.CardMapper;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.security.UserService;
-import com.example.bankcards.util.CardMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -18,7 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -28,36 +28,32 @@ import java.util.UUID;
 public class CardServiceImpl implements CardService {
 
     private static final Random random = new Random();
-
     private final CardRepository cardRepository;
-
     private final UserService userService;
-
     private final CardMapper cardMapper;
-
 
     @Override
     public CardDto createCard(CardCreateRequest request) {
-        var currentUserEntity = userService.getCurrentUser();
+        UserEntity currentUserEntity = userService.getCurrentUser();
 
-
-        boolean isAdmin = false;
+        boolean isAdmin = currentUserEntity.getRoles().stream()
+                .anyMatch(role -> role.getName() == RoleName.ROLE_ADMIN);
 
         UserEntity cardOwner = isAdmin
                 ? userService.findUserById(request.getUserId())
                 : currentUserEntity;
 
         CardEntity cardEntity = new CardEntity();
-        cardEntity.setUserEntity(cardOwner);
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.YEAR, 4);
-        cardEntity.setValidityPeriod(cal.getTime());
+        cardEntity.setUser(cardOwner);
+
+        LocalDate validityPeriod = LocalDate.now().plusYears(4);
+        cardEntity.setValidityPeriod(validityPeriod);
         cardEntity.setBalance(BigDecimal.ZERO);
         cardEntity.setStatus(CardStatusEnum.ACTIVE);
         cardEntity.setCardNumber(generateCardNumber());
 
         CardEntity savedCardEntity = cardRepository.save(cardEntity);
-        return cardMapper.toCardDto(savedCardEntity);
+        return cardMapper.toDto(savedCardEntity);
     }
 
     public static String generateCardNumber() {
@@ -76,14 +72,8 @@ public class CardServiceImpl implements CardService {
     @Override
     public Page<CardDto> getCardsPage(int page, int size) {
         Page<CardEntity> pageOfCards = cardRepository.findAll(PageRequest.of(page, size));
-        List<CardDto> cardDtos = pageOfCards.stream()
-                .map(c -> new CardDto(
-                        c.getUserEntity().getUsername(),
-                        c.getCardNumber(),
-                        c.getValidityPeriod(),
-                        c.getBalance(),
-                        c.getStatus()
-                                ))
+        List<CardDto> cardDtos = pageOfCards.getContent().stream()
+                .map(cardMapper::toDto)
                 .toList();
         return new PageImpl<>(cardDtos, pageOfCards.getPageable(), pageOfCards.getTotalElements());
     }

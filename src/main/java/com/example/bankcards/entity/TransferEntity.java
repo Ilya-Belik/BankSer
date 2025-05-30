@@ -1,41 +1,38 @@
 package com.example.bankcards.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.security.Timestamp;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "transfers")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class TransferEntity {
-
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "from_card_id", nullable = false)
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "from_card_id")
     private CardEntity fromCard;
 
-    @ManyToOne
-    @JoinColumn(name = "to_card_id", nullable = false)
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "to_card_id")
     private CardEntity toCard;
 
-    @NotNull
     @Column(nullable = false)
     private BigDecimal amount;
 
     @Column(name = "created_at")
-    private Timestamp createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column(length = 20)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private TransferStatusEnum status;
 }

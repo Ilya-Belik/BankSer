@@ -3,10 +3,12 @@ package com.example.bankcards.security;
 import com.example.bankcards.dto.UserCreateRequest;
 import com.example.bankcards.entity.UserEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
 
 public interface UserService extends UserDetailsService {
 
@@ -22,7 +24,6 @@ public interface UserService extends UserDetailsService {
 
     Optional<UserEntity> getByUsername(String username);
 
-    UserDetailsService userDetailsService();
-
     UserEntity getCurrentUser();
+
 }

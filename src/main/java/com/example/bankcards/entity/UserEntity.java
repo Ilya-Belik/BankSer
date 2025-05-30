@@ -8,8 +8,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Table(name = "users")
 @Entity
@@ -19,21 +19,24 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserEntity implements UserDetails {
-
     @Id
-    @GeneratedValue()
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @NotEmpty(message = "Имя не должно быть пустым")
-    @Size(min = 2, max = 50, message = "Псевдоним не должен быть короче 2 или длиннее 50 символов")
-    @Column(name = "username")
+    @Column(nullable = false, unique = true, length = 50)
     private String username;
 
-    @NotEmpty(message = "Поле пароль обязательно к заполнению")
-    @Size(min = 5, max = 200, message = "Пароль должен быть не короче 5 или длиннее 50 символов, состоять должен из латинских символов разного регистра")
-    @Column(name = "password")
+    @Column(nullable = false, length = 200)
     private String password;
+
+    @Column(length = 100)
+    private String email;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<CardEntity> cards = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -43,18 +46,30 @@ public class UserEntity implements UserDetails {
     )
     private Set<RoleEntity> roles = new HashSet<>();
 
-    @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<CardEntity> cardEntities = new HashSet<>();
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toSet());
+                .map(role -> new SimpleGrantedAuthority(role.getName().name()))
+                .toList();
     }
 
     @Override
-    public String toString() {
-        return String.format("Person{%s\n%s\n%s\n%s}\n", this.id, this.username, this.password);
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

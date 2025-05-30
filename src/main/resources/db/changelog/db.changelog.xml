@@ -4,6 +4,7 @@
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
     <include file="/db/changelog/2025/001-create-tables.xml"/>
+    <include file="db/changelog/2025/001-create-card-table.xml"/>
 
 
 </databaseChangeLog>
