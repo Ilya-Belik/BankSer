@@ -1,7 +1,7 @@
 package com.example.bankcards.security;
 
 import com.example.bankcards.dto.UserCreateRequest;
-import com.example.bankcards.entity.RoleEnum;
+import com.example.bankcards.entity.RoleEntity;
 import com.example.bankcards.entity.UserEntity;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.exception.PersonNotFoundException;
@@ -65,10 +65,10 @@ public class UserServiceImpl implements UserService {
         System.out.println(userEntity);
         userEntity.setPassword(jwtService.passwordEncoder().encode(request.getPassword()));
         var currentUser = getCurrentUser();
-        if (currentUser != null && currentUser.getRoleEnum().equals(RoleEnum.ADMIN)) {
-            userEntity.setRoleEnum(request.getRoleEnum());
+        if (currentUser != null && currentUser.getRoles().equals("ADMIN")) {
+            userEntity.setRoles((Set<RoleEntity>) request.getRoleEntity());
         } else {
-            userEntity.setRoleEnum(RoleEnum.USER);
+            //userEntity.setRoles("USER");
         }
         System.out.println(userEntity);
         return userRepository.save(userEntity);
@@ -98,8 +98,8 @@ public class UserServiceImpl implements UserService {
             existingUserEntity.setPassword(encodedPassword);
         }
 
-        if (updatedPerson.getRoleEnum() != null) {
-            existingUserEntity.setRoleEnum(updatedPerson.getRoleEnum());
+        if (updatedPerson.getRoles() != null) {
+            existingUserEntity.setRoles(updatedPerson.getRoles());
         }
 
         return userRepository.save(existingUserEntity);

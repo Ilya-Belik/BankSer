@@ -4,7 +4,7 @@ import com.example.bankcards.dto.CardCreateRequest;
 import com.example.bankcards.dto.CardDto;
 import com.example.bankcards.entity.CardEntity;
 import com.example.bankcards.entity.CardStatusEnum;
-import com.example.bankcards.entity.RoleEnum;
+import com.example.bankcards.entity.RoleEntity;
 import com.example.bankcards.entity.UserEntity;
 import com.example.bankcards.exception.ErrorMessages;
 import com.example.bankcards.exception.NotFoundException;
@@ -41,7 +41,7 @@ public class CardServiceImpl implements CardService {
         UserEntity currentUserEntity = userService.getCurrentUser();
 
 
-        boolean isAdmin = currentUserEntity.getRoleEnum() == RoleEnum.ADMIN;
+        boolean isAdmin = false;
 
         UserEntity cardOwner = isAdmin
                 ? userService.findUserById(request.getUserId())

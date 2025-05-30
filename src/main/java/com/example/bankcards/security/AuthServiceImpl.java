@@ -32,7 +32,7 @@ public class AuthServiceImpl implements AuthService {
         return new UserResponse(
                 user.getId(),
                 user.getUsername(),
-                user.getRoleEnum().name(),
+                user.getRoles().toString(),
                 token
         );
     }
