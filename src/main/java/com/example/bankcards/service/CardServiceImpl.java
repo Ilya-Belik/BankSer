@@ -2,22 +2,20 @@ package com.example.bankcards.service;
 
 import com.example.bankcards.dto.CardCreateRequest;
 import com.example.bankcards.dto.CardDto;
-import com.example.bankcards.entity.Card;
-import com.example.bankcards.entity.CardStatus;
-import com.example.bankcards.entity.Role;
-import com.example.bankcards.entity.User;
+import com.example.bankcards.entity.CardEntity;
+import com.example.bankcards.entity.CardStatusEnum;
+import com.example.bankcards.entity.RoleEnum;
+import com.example.bankcards.entity.UserEntity;
 import com.example.bankcards.exception.ErrorMessages;
 import com.example.bankcards.exception.NotFoundException;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.security.UserService;
 import com.example.bankcards.util.CardMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
@@ -40,26 +38,26 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public CardDto createCard(CardCreateRequest request) {
-        User currentUser = userService.getCurrentUser();
+        UserEntity currentUserEntity = userService.getCurrentUser();
 
 
-        boolean isAdmin = currentUser.getRole() == Role.ADMIN;
+        boolean isAdmin = currentUserEntity.getRoleEnum() == RoleEnum.ADMIN;
 
-        User cardOwner = isAdmin
+        UserEntity cardOwner = isAdmin
                 ? userService.findUserById(request.getUserId())
-                : currentUser;
+                : currentUserEntity;
 
-        Card card = new Card();
-        card.setUser(cardOwner);
+        CardEntity cardEntity = new CardEntity();
+        cardEntity.setUserEntity(cardOwner);
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.YEAR, 4);
-        card.setValidityPeriod(cal.getTime());
-        card.setBalance(BigDecimal.ZERO);
-        card.setStatus(CardStatus.ACTIVE);
-        card.setCardNumber(generateCardNumber());
+        cardEntity.setValidityPeriod(cal.getTime());
+        cardEntity.setBalance(BigDecimal.ZERO);
+        cardEntity.setStatus(CardStatusEnum.ACTIVE);
+        cardEntity.setCardNumber(generateCardNumber());
 
-        Card savedCard = cardRepository.save(card);
-        return cardMapper.toCardDto(savedCard);
+        CardEntity savedCardEntity = cardRepository.save(cardEntity);
+        return cardMapper.toCardDto(savedCardEntity);
     }
 
     public static String generateCardNumber() {
@@ -77,10 +75,10 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public Page<CardDto> getCardsPage(int page, int size) {
-        Page<Card> pageOfCards = cardRepository.findAll(PageRequest.of(page, size));
+        Page<CardEntity> pageOfCards = cardRepository.findAll(PageRequest.of(page, size));
         List<CardDto> cardDtos = pageOfCards.stream()
                 .map(c -> new CardDto(
-                        c.getUser().getUsername(),
+                        c.getUserEntity().getUsername(),
                         c.getCardNumber(),
                         c.getValidityPeriod(),
                         c.getBalance(),
@@ -96,11 +94,11 @@ public class CardServiceImpl implements CardService {
             throw new IllegalArgumentException("Invalid card status: " + status);
         }
 
-        Card card = cardRepository.findById(cardId)
+        CardEntity cardEntity = cardRepository.findById(cardId)
                 .orElseThrow(() -> new NotFoundException(String.format(ErrorMessages.CARD_NOT_FOUND, cardId)));
 
-        card.setStatus(CardStatus.BLOCKED);
-        cardRepository.save(card);
+        cardEntity.setStatus(CardStatusEnum.BLOCKED);
+        cardRepository.save(cardEntity);
     }
 
 

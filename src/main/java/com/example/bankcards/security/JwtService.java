@@ -1,6 +1,6 @@
 package com.example.bankcards.security;
 
-import com.example.bankcards.entity.User;
+import com.example.bankcards.entity.UserEntity;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -42,9 +42,9 @@ public class JwtService {
      */
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        if (userDetails instanceof User customUserDetails) {
-            claims.put("id", customUserDetails.getId());
-            claims.put("role", customUserDetails.getRole());
+        if (userDetails instanceof UserEntity customUserEntityDetails) {
+            claims.put("id", customUserEntityDetails.getId());
+            claims.put("role", customUserEntityDetails.getRoleEnum());
         }
         return generateToken(claims, userDetails);
     }

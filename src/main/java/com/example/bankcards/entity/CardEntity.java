@@ -3,7 +3,6 @@ package com.example.bankcards.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -16,7 +15,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-public class Card {
+public class CardEntity {
 
     @Id
     @Column(name = "id")
@@ -38,14 +37,14 @@ public class Card {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private UserEntity userEntity;
 
     @NotNull
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private CardStatus status;
+    private CardStatusEnum status;
 
-    public User getUser() {
-        return this.user;
+    public UserEntity getUserEntity() {
+        return this.userEntity;
     }
 }

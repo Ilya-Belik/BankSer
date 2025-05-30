@@ -1,6 +1,6 @@
 package com.example.bankcards.entity;
 
-public enum CardStatus {
+public enum CardStatusEnum {
     ACTIVE,
     BLOCKED
 }

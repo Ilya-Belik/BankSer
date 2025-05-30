@@ -28,14 +28,14 @@
         </createTable>
     </changeSet>
 
-    <!-- Create cards table -->
-    <changeSet id="2-create-cards" author="yourname">
+    <!-- Create cardEntities table -->
+    <changeSet id="2-create-cardEntities" author="yourname">
         <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="cards"/>
+                <tableExists tableName="cardEntities"/>
             </not>
         </preConditions>
-        <createTable tableName="cards">
+        <createTable tableName="cardEntities">
             <column name="id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -57,7 +57,7 @@
         </createTable>
 
         <addForeignKeyConstraint
-                baseTableName="cards"
+                baseTableName="cardEntities"
                 baseColumnNames="user_id"
                 referencedTableName="users"
                 referencedColumnNames="id"

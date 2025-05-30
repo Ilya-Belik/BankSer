@@ -1,8 +1,7 @@
 package com.example.bankcards.security;
 
 import com.example.bankcards.dto.UserCreateRequest;
-import com.example.bankcards.dto.UserResponse;
-import com.example.bankcards.entity.User;
+import com.example.bankcards.entity.UserEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
@@ -11,19 +10,19 @@ import java.util.UUID;
 
 public interface UserService extends UserDetailsService {
 
-    List<User> getAll();
+    List<UserEntity> getAll();
 
-    User findUserById(UUID id);
+    UserEntity findUserById(UUID id);
 
-    User createNewUser(UserCreateRequest request);
+    UserEntity createNewUser(UserCreateRequest request);
 
     void delete(UUID id);
 
-    User update(User updatedUser);
+    UserEntity update(UserEntity updatedUserEntity);
 
-    Optional<User> getByUsername(String username);
+    Optional<UserEntity> getByUsername(String username);
 
     UserDetailsService userDetailsService();
 
-    User getCurrentUser();
+    UserEntity getCurrentUser();
 }

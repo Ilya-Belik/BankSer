@@ -1,7 +1,6 @@
 package com.example.bankcards.dto;
 
-import com.example.bankcards.entity.CardStatus;
-import com.example.bankcards.entity.User;
+import com.example.bankcards.entity.CardStatusEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,5 +20,5 @@ public class CardDto {
     private String cardNumber;
     private Date validityPeriod;
     private BigDecimal balance;
-    private CardStatus status;
+    private CardStatusEnum status;
 }
