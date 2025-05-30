@@ -2,10 +2,10 @@ package com.example.bankcards.controller;
 
 import com.example.bankcards.dto.CardCreateRequest;
 import com.example.bankcards.dto.CardDto;
+import com.example.bankcards.mapper.CardMapper;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.service.CardService;
-import com.example.bankcards.util.CardMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;

@@ -7,6 +7,7 @@ import com.example.bankcards.dto.jwt.SignInRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,12 +28,12 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public UserResponse signUp(UserCreateRequest request) {
         var user = userService.createNewUser(request);
-        var token = jwtService.generateToken(user);
+        var token = jwtService.generateToken((UserDetails) user);
 
         return new UserResponse(
                 user.getId(),
                 user.getUsername(),
-                user.getRoleEnum().name(),
+                user.getRoles().toString(),
                 token
         );
     }

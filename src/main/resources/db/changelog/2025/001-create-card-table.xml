@@ -29,7 +29,7 @@
     </changeSet>
 
     <!-- Create cardEntities table -->
-    <changeSet id="2-create-cardEntities" author="yourname">
+    <changeSet id="2-create-cardEntity" author="yourname">
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="cardEntities"/>

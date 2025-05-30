@@ -2,5 +2,6 @@ package com.example.bankcards.entity;
 
 public enum CardStatusEnum {
     ACTIVE,
-    BLOCKED
+    BLOCKED,
+    EXPIRED
 }
