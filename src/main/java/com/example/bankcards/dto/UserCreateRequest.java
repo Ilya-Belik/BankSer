@@ -1,6 +1,6 @@
 package com.example.bankcards.dto;
 
-import com.example.bankcards.entity.Role;
+import com.example.bankcards.entity.RoleEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -27,5 +27,5 @@ public class UserCreateRequest {
 
     @Schema(description = "Роль")
     @NotNull(message = "Выберите роль")
-    private Role role;
+    private RoleEnum roleEnum;
 }

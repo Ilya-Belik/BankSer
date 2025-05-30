@@ -1,9 +1,8 @@
 package com.example.bankcards.util;
 
 import com.example.bankcards.dto.CardDto;
-import com.example.bankcards.entity.Card;
+import com.example.bankcards.entity.CardEntity;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 import java.util.List;
 
@@ -11,7 +10,7 @@ import java.util.List;
 public interface CardMapper {
 
     //@Mapping(source = "user.username", target = "username")
-    CardDto toCardDto(Card card);
+    CardDto toCardDto(CardEntity cardEntity);
 
-    List<CardDto> toCardDtoList(List<Card> cards);
+    List<CardDto> toCardDtoList(List<CardEntity> cardEntities);
 }

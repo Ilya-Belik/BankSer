@@ -3,7 +3,7 @@ package com.example.bankcards.entity;
 import lombok.Getter;
 
 @Getter
-public enum Role {
+public enum RoleEnum {
     USER,
     ADMIN
 }
