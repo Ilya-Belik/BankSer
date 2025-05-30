@@ -24,7 +24,6 @@ public interface UserService extends UserDetailsService {
 
     Optional<UserEntity> getByUsername(String username);
 
-    UserDetailsService userDetailsService();
-
     UserEntity getCurrentUser();
+
 }

@@ -54,20 +54,22 @@ public Optional<UserEntity> getByUsername(String username) {
     return userRepository.findByUsername(username);
 }
 
-@Override
+
 public UserDetailsService userDetailsService() {
     return this::loadUserByUsername;
 }
 
 @Override
 public UserEntity getCurrentUser() {
-    // здесь реализация зависит от твоего `SecurityContextHolder`
-    return null;
+    Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    if (principal instanceof UserEntity user) {
+        return user;
+    }
+    throw new UsernameNotFoundException("Пользователь не найден в контексте безопасности");
 }
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return (UserDetails) userRepository.findByUsername(username)
+        return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден: " + username));
     }
 }
