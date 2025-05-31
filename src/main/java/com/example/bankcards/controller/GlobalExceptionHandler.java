@@ -1,6 +1,7 @@
 package com.example.bankcards.controller;
 
 import com.example.bankcards.exception.AppError;
+import com.example.bankcards.exception.CardOperationException;
 import com.example.bankcards.exception.NotFoundException;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
@@ -39,5 +40,15 @@ public class GlobalExceptionHandler {
         error.setMessage("Internal server error");
         error.setTimestamp(new Date());
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(CardOperationException.class)
+    public ResponseEntity<AppError> handleCardOperationException(CardOperationException ex) {
+        AppError error = new AppError();
+        error.setStatus(ex.getStatus());
+        error.setMessage(ex.getMessage());
+        error.setTimestamp(new Date());
+
+        return new ResponseEntity<>(error, HttpStatus.valueOf(ex.getStatus()));
     }
 }

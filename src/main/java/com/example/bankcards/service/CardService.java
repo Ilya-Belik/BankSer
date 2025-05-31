@@ -2,8 +2,11 @@ package com.example.bankcards.service;
 
 import com.example.bankcards.dto.CardCreateRequest;
 import com.example.bankcards.dto.CardDto;
+import com.example.bankcards.dto.TransferRequest;
 import org.springframework.data.domain.Page;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 
@@ -15,6 +18,8 @@ public interface CardService {
      */
     CardDto createCard(CardCreateRequest cardData);
     Page<CardDto> getCardsPage(int page, int size);
+
+    CardDto transferBetweenUserCards(UUID userId, TransferRequest request);
 
 //
 //    // ============================

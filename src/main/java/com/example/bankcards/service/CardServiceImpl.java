@@ -2,10 +2,12 @@ package com.example.bankcards.service;
 
 import com.example.bankcards.dto.CardCreateRequest;
 import com.example.bankcards.dto.CardDto;
+import com.example.bankcards.dto.TransferRequest;
 import com.example.bankcards.entity.CardEntity;
 import com.example.bankcards.entity.CardStatusEnum;
 import com.example.bankcards.entity.RoleName;
 import com.example.bankcards.entity.UserEntity;
+import com.example.bankcards.exception.CardOperationException;
 import com.example.bankcards.exception.ErrorMessages;
 import com.example.bankcards.exception.NotFoundException;
 import com.example.bankcards.mapper.CardMapper;
@@ -16,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -91,6 +94,34 @@ public class CardServiceImpl implements CardService {
         cardRepository.save(cardEntity);
     }
 
+    @Override
+    @Transactional
+    public CardDto transferBetweenUserCards(UUID userId, TransferRequest request) {
+        CardEntity fromCard = cardRepository.findById(request.getFromCardId())
+                .orElseThrow(() -> new CardOperationException(
+                        String.format(ErrorMessages.CARD_NOT_FOUND, request.getFromCardId()), 404));
+
+        CardEntity toCard = cardRepository.findById(request.getToCardId())
+                .orElseThrow(() -> new CardOperationException(
+                        String.format(ErrorMessages.CARD_NOT_FOUND, request.getToCardId()), 404));
+
+        if (!fromCard.getUser().getId().equals(userId) || !toCard.getUser().getId().equals(userId)) {
+            throw new CardOperationException("Доступ запрещён: карты не принадлежат пользователю", 403);
+        }
+
+        if (fromCard.getBalance().compareTo(request.getAmount()) < 0) {
+            throw new CardOperationException(ErrorMessages.NOT_ENOUGH_MONEY, 400);
+        }
+
+        fromCard.setBalance(fromCard.getBalance().subtract(request.getAmount()));
+        toCard.setBalance(toCard.getBalance().add(request.getAmount()));
+
+        cardRepository.save(fromCard);
+        cardRepository.save(toCard);
+
+        return cardMapper.toDto(fromCard);
+    }
+
 
 
 //
@@ -109,24 +140,6 @@ public class CardServiceImpl implements CardService {
 //        return new PageImpl<>(pageContent, PageRequest.of(pageNumber, pageSize), total);
 //    }
 //
-//    @Override
-//    public void transferBetweenUserCards(Long userId, Long fromCardId, Long toCardId, BigDecimal amount) {
-//        Card fromCard = findById(fromCardId);
-//        Card toCard = findById(toCardId);
-//
-//        if (fromCard == null || toCard == null || !fromCard.getUserId().equals(userId) || !toCard.getUserId().equals(userId)) {
-//            throw new RuntimeException("Invalid cards or access denied");
-//        }
-//
-//        if (fromCard.getBalance().compareTo(amount) < 0) {
-//            throw new RuntimeException("Insufficient funds");
-//        }
-//
-//        fromCard.setBalance(fromCard.getBalance().subtract(amount));
-//        toCard.setBalance(toCard.getBalance().add(amount));
-//
-//        // Обновление данных в репозитории при необходимости
-//    }
 //
 //    @Override
 //    public BigDecimal getBalance(Long userId, Long cardId) {

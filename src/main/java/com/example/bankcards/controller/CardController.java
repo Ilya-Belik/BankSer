@@ -2,13 +2,19 @@ package com.example.bankcards.controller;
 
 import com.example.bankcards.dto.CardCreateRequest;
 import com.example.bankcards.dto.CardDto;
+import com.example.bankcards.dto.TransferRequest;
 import com.example.bankcards.mapper.CardMapper;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.service.CardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,5 +37,14 @@ public class CardController {
     @PostMapping("/createCard")
     public CardDto createCard(@RequestBody CardCreateRequest request) {
         return cardService.createCard(request);
+    }
+
+    // Пока на похуй
+    @PostMapping("/transfer")
+    public ResponseEntity<CardDto> transferBetweenCards(@AuthenticationPrincipal UserDetails userDetails,
+                                                        @RequestBody TransferRequest request) {
+        //CardDto updatedCard = cardService.transferBetweenUserCards(userId, request);
+        //return ResponseEntity.ok(updatedCard);
+        return null;
     }
 }
